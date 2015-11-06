@@ -1,0 +1,1 @@
+document.writeln("<p>This is text injected from JAVASCRIPT file</p>");
