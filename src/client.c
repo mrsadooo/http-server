@@ -39,21 +39,21 @@ void * client(void * sock) {
 
     if (file != NULL){
 
-    const int size = 256;
-    char line[size];
+        const int size = 256;
+        char line[size];
 
-    while (fgets(line, size, file) != NULL) {
+        while (fgets(line, size, file) != NULL) {
 
-        // write response
-        write(socket, line, strlen(line));
+            // write response
+            write(socket, line, strlen(line));
 
-    };
+        };
 
-    fclose(file);
+        fclose(file);
 
     }
 
-   // close the connection
-   close(socket);
+    // close the connection
+    close(socket);
 
 }
