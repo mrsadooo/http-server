@@ -12,40 +12,40 @@
 #include <pthread.h>
 #include <client.h>
 
-const int PORT = 8080;
+int server(int port) {
 
-struct sockaddr_in address;
+    struct sockaddr_in address;
+    socklen_t address_length;
 
-int main(int argc, char *argv[]) {
+    int sock = socket(AF_INET, SOCK_STREAM, 0);
 
-   socklen_t address_length;
+    address.sin_family = AF_INET;
+    address.sin_addr.s_addr = INADDR_ANY;
+    address.sin_port = htons(port);
 
-   int sock = socket(AF_INET, SOCK_STREAM, 0);
+    // Binding the socket on address and port
+    if (bind(sock, (struct sockaddr *) &address, sizeof(address)) == 0){
+        printf("Socket: listening on port %d\n", port);
+    } else {
+        printf("Socket: unable to bind on port %d\n", port);
+        return 1;
+    }
 
-   address.sin_family = AF_INET;
-   address.sin_addr.s_addr = INADDR_ANY;
-   address.sin_port = htons(PORT);
-
-   // Binding the socket on address and port
-   if (bind(sock, (struct sockaddr *) &address, sizeof(address)) == 0){
-      printf("Socket: listening on port %d\n", PORT);
-   }
-
-   while (1) {
+    while (1) {
 
         if (listen(sock, 10) < 0) {
-            exit(1);
+            return 1;
         }
 
         long connection = accept(sock, (struct sockaddr *) &address, &address_length);
 
-        pthread_t thread;
+        pthread_t new_thread;
 
-        pthread_create(&thread, NULL, client, (void *) connection);
+        pthread_create(&new_thread, NULL, client, (void *) connection);
 
-   }
+    }
 
-   close(sock);
+    close(sock);
 
-   return 0;
+    return 0;
 }
