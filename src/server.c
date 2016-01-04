@@ -3,6 +3,7 @@
 
 #include <netinet/in.h>
 #include <stdio.h>
+#include <signal.h>
 #include <string.h>
 #include <stdlib.h>
 #include <sys/socket.h>
@@ -18,6 +19,12 @@ int server(int port) {
     socklen_t address_length;
 
     int sock = socket(AF_INET, SOCK_STREAM, 0);
+
+    void sigint(int sig_no) {
+        close(sock);
+    }
+
+    signal(SIGINT, sigint);
 
     address.sin_family = AF_INET;
     address.sin_addr.s_addr = INADDR_ANY;
