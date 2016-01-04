@@ -3,7 +3,7 @@ SOURCE  = ./src
 DEST = ./dist
 OBJ_DIR = ./obj
 HEADERS = ./headers
-ARTIFACTS = server.o
+ARTIFACTS = server.o client.o
 
 make: clean build
 
@@ -13,7 +13,7 @@ $(ARTIFACTS): %.o: $(SOURCE)/%.c
 
 build: $(ARTIFACTS)
 	mkdir -p $(DEST)
-	$(CC) $(patsubst %,$(OBJ_DIR)/%,$(ARTIFACTS)) -o $(DEST)/server
+	$(CC) -pthread $(patsubst %,$(OBJ_DIR)/%,$(ARTIFACTS)) -o $(DEST)/server
 
 clean:
 	rm -rf $(OBJ_DIR)/*.o
