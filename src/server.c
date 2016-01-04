@@ -1,3 +1,6 @@
+// watki odlaczone - detached state
+// joiny na watkach
+
 #include <netinet/in.h>
 #include <stdio.h>
 #include <string.h>
@@ -13,50 +16,49 @@ const int BUFFER_SIZE = 1024;
 struct sockaddr_in address;
 char * root = "example";
 
-void* newClient(void* newSock)
-{
-	
-	int new_socket = *((int*) newSock);
-	// create a buffer to keep data from request
-	char *buffer = (char*) malloc(BUFFER_SIZE);
+void * newClient(void* newSock) {
 
-	if (new_socket < 0) {
-         	exit(1);
-      	}
-	
-      	// Receive data from client
-      	recv(new_socket, buffer, BUFFER_SIZE, 0);
+    int new_socket = (long) newSock;
+    // create a buffer to keep data from request
+    char *buffer = (char*) malloc(BUFFER_SIZE);
 
-      	// extracting a method and a path from the first line
-      	char * method = strtok(buffer, " ");
-      	char * path = strtok(NULL, " ");
+    if (new_socket < 0) {
+        exit(1);
+    }
 
-      	printf("Socket: [%s] %s\n", method, path);
+    // Receive data from client
+    recv(new_socket, buffer, BUFFER_SIZE, 0);
 
-      	char url[256] = "";
-      	strcat(url, root);
-      	strcat(url, path);
+    // extracting a method and a path from the first line
+    char * method = strtok(buffer, " ");
+    char * path = strtok(NULL, " ");
 
-      	FILE * file = fopen(url, "r");
+    printf("Socket: [%s] %s\n", method, path);
 
-      	if (file != NULL){
+    char url[256] = "";
+    strcat(url, root);
+    strcat(url, path);
 
-         	const int size = 256;
-         	char line[size];
+    FILE * file = fopen(url, "r");
 
-         	while (fgets(line, size, file) != NULL) {
+    if (file != NULL){
 
-            	// write response
-            	write(new_socket, line, strlen(line));
+    const int size = 256;
+    char line[size];
 
-         	};
+    while (fgets(line, size, file) != NULL) {
 
-         	fclose(file);
+        // write response
+        write(new_socket, line, strlen(line));
 
-      	}
-	
-      // close the connection
-      close(new_socket);
+    };
+
+    fclose(file);
+
+    }
+
+   // close the connection
+   close(new_socket);
 
 }
 
@@ -80,15 +82,15 @@ int main(int argc, char *argv[]) {
 
    while (1) {
 
-      	if (listen(create_socket, 10) < 0) {
-         exit(1);
-      	}
+        if (listen(create_socket, 10) < 0) {
+            exit(1);
+        }
 
-      	int new_socket = accept(create_socket, (struct sockaddr *) &address, &address_length);
-	
-	pthread_t newThread;
-	
-	pthread_create(&newThread, NULL, newClient, (void*)&new_socket);
+        long new_socket = accept(create_socket, (struct sockaddr *) &address, &address_length);
+
+    pthread_t newThread;
+
+    pthread_create(&newThread, NULL, newClient, (void*) new_socket);
 
    }
 
