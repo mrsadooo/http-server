@@ -3,7 +3,12 @@ SOURCE  = ./src
 DEST = ./dist
 OBJ_DIR = ./obj
 HEADERS = ./headers
-ARTIFACTS = main.o server.o client.o cgi.o static_content_reader.o
+ARTIFACTS = main.o \
+            server.o \
+            client.o \
+            cgi.o \
+            static_content_reader.o \
+            cgi_content_reader.o
 
 make: clean build
 
