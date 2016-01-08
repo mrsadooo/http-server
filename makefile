@@ -3,7 +3,7 @@ SOURCE  = ./src
 DEST = ./dist
 OBJ_DIR = ./obj
 HEADERS = ./headers
-ARTIFACTS = main.o server.o client.o
+ARTIFACTS = main.o server.o client.o cgi.o
 
 make: clean build
 
