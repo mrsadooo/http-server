@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-int cgi(char * exec, char * command){
+int cgi(char * exec, char * command, char * file){
     pid_t pid;
 
     int status;
@@ -24,11 +24,14 @@ int cgi(char * exec, char * command){
 
     // parent process
     if(pid){
+        // close stdin, stdout and stderr
         int in = dup(0);
+        int out = dup(1);
+        int err = dup(2);
 
-        // close unused descriptors
-        close(descriptor[1]);
         close(0);
+        close(1);
+        close(2);
 
         // redirect stdin to descriptor input
         dup2(descriptor[0], 0);
@@ -36,22 +39,39 @@ int cgi(char * exec, char * command){
         // wait for child process to end
         wait(&status);
 
-        // reopen stdin
+        // reopen stdin, stdout and stderr
         dup2(in, 0);
+        dup2(out, 1);
+        dup2(err, 2);
+
+        // close write descriptor
+        close(descriptor[1]);
+
+        if (status){
+            close(descriptor[0]);
+            return status;
+        } else {
+            return descriptor[0];
+        }
+
+        return descriptor[0];
 
     // child process
     } else {
-        close(1);
+        close(0);
+        close(2);
         dup2(descriptor[1], 1);
 
         // replace the child fork with a new process
-        if(execl(exec, command, NULL) == -1){
+        if(execl(exec, command, file, NULL) == -1){
             exit(1);
         }
 
         exit(0);
     }
 
-    return descriptor[0];
+}
 
+int cgi_bash(char * file){
+    return cgi("/bin/bash", "sh", file);
 }
