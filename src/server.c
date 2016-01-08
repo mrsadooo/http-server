@@ -20,11 +20,11 @@ int server(int port) {
 
     int sock = socket(AF_INET, SOCK_STREAM, 0);
 
-    void sigint(int sig_no) {
-        close(sock);
+    // make sure that we can reuse the socket port
+    int byte = 1;
+    if (setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, &byte, sizeof(byte)) == -1) {
+        exit(1);
     }
-
-    signal(SIGINT, sigint);
 
     address.sin_family = AF_INET;
     address.sin_addr.s_addr = INADDR_ANY;
