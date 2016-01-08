@@ -8,6 +8,9 @@
 #include <unistd.h>
 #include <pthread.h>
 
+// file readers
+#include <static_content_reader.h>
+
 const int BUFFER_SIZE = 1024;
 const char root[] = "example";
 
@@ -35,23 +38,7 @@ void * client(void * sock) {
     strcat(url, root);
     strcat(url, path);
 
-    FILE * file = fopen(url, "r");
-
-    if (file != NULL){
-
-        const int size = 256;
-        char line[size];
-
-        while (fgets(line, size, file) != NULL) {
-
-            // write response
-            write(socket, line, strlen(line));
-
-        };
-
-        fclose(file);
-
-    }
+    StaticContentReader(url, &socket);
 
     // close the connection
     close(socket);
