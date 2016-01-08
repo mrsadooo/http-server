@@ -7,9 +7,12 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include <pthread.h>
+#include <sys/types.h>
+#include <regex.h>
 
 // file readers
 #include <static_content_reader.h>
+#include <cgi_content_reader.h>
 
 const int BUFFER_SIZE = 1024;
 const char root[] = "example";
@@ -38,7 +41,14 @@ void * client(void * sock) {
     strcat(url, root);
     strcat(url, path);
 
-    StaticContentReader(url, &socket);
+    regex_t bash;
+    regcomp(&bash, "\\.sh$", 0);
+
+    if (!regexec(&bash, url, 0, NULL, 0)){
+        CGIContentReader(url, &socket);
+    } else {
+        StaticContentReader(url, &socket);
+    }
 
     // close the connection
     close(socket);
