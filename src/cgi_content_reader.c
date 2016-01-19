@@ -11,7 +11,7 @@
 
 int CGIContentReader(char * file, int * socket){
 
-    int fd = cgi_bash(file);
+    int fd = cgi(file, NULL);
 
     if (fd){
 

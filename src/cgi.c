@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-int cgi(char * exec, char * command, char * file){
+int cgi(char * file, char * args[]){
     pid_t pid;
 
     int status;
@@ -63,15 +63,11 @@ int cgi(char * exec, char * command, char * file){
         dup2(descriptor[1], 1);
 
         // replace the child fork with a new process
-        if(execl(exec, command, file, NULL) == -1){
+        if(execv(file, args) == -1){
             exit(1);
         }
 
         exit(0);
     }
 
-}
-
-int cgi_bash(char * file){
-    return cgi("/bin/bash", "sh", file);
 }
