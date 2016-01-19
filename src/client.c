@@ -9,13 +9,11 @@
 #include <pthread.h>
 #include <sys/types.h>
 #include <regex.h>
+#include <fcntl.h>
 
-// file readers
-#include <static_content_reader.h>
-#include <cgi_content_reader.h>
-
-const int BUFFER_SIZE = 1024;
-const char root[] = "example";
+#include <const.h>
+#include <cgi.h>
+#include <reader.h>
 
 int is_file_executable(char * file){
     struct stat sb;
@@ -42,15 +40,20 @@ void * client(void * sock) {
 
     printf("Socket: [%s] %s\n", method, path);
 
+    char root[256] = ROOT;
     char url[256] = "";
     strcat(url, root);
     strcat(url, path);
 
+    int fd;
+
     if (is_file_executable(url)){
-        CGIContentReader(url, &socket);
+        fd = cgi(url, NULL);
     } else {
-        StaticContentReader(url, &socket);
+        fd = open(url, O_RDONLY);
     }
+
+    FileReader(fd, &socket);
 
     // close the connection
     close(socket);
