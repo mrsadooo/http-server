@@ -17,6 +17,11 @@
 const int BUFFER_SIZE = 1024;
 const char root[] = "example";
 
+int is_file_executable(char * file){
+    struct stat sb;
+    return stat(file, &sb) == 0 && sb.st_mode & S_IXUSR ? 1 : 0;
+}
+
 void * client(void * sock) {
 
     int socket = (long) sock;
@@ -41,10 +46,7 @@ void * client(void * sock) {
     strcat(url, root);
     strcat(url, path);
 
-    regex_t bash;
-    regcomp(&bash, "\\.sh$", 0);
-
-    if (!regexec(&bash, url, 0, NULL, 0)){
+    if (is_file_executable(url)){
         CGIContentReader(url, &socket);
     } else {
         StaticContentReader(url, &socket);
