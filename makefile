@@ -6,9 +6,7 @@ HEADERS = ./headers
 ARTIFACTS = main.o \
             server.o \
             client.o \
-            cgi.o \
-            static_content_reader.o \
-            cgi_content_reader.o
+            cgi.o
 
 make: clean build
 
