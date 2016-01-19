@@ -53,7 +53,9 @@ void * client(void * sock) {
         fd = open(url, O_RDONLY);
     }
 
-    FileReader(fd, &socket);
+    if (fd != -1){
+        FileReader(fd, &socket);
+    }
 
     // close the connection
     close(socket);
