@@ -10,11 +10,15 @@
 #include <sys/types.h>
 #include <const.h>
 
-void Http404Error(char * url, int * socket){
+void HttpResponse(int * socket, int status, char * content){
     char response[BUFFER_SIZE];
-    char * content = "404 Page Not Found";
+    char * template = "HTTP/1.1 %d OK\nContent-Length: %lu\nConnection: close\n\n%s";
 
-    snprintf(response, BUFFER_SIZE, "HTTP/1.1 404 OK\nContent-Length: %lu\n%s", sizeof(content), content);
+    snprintf(response, BUFFER_SIZE, template, status, strlen(content), content);
 
     write(*socket, response, sizeof(response));
+}
+
+void Http404Error(char * url, int * socket){
+    HttpResponse(socket, 404, "404 Page Not Found");
 }
