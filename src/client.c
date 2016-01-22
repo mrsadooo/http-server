@@ -12,6 +12,7 @@
 #include <fcntl.h>
 
 #include <const.h>
+#include <error.h>
 #include <cgi.h>
 #include <reader.h>
 
@@ -55,6 +56,8 @@ void * client(void * sock) {
 
     if (fd != -1){
         FileReader(fd, &socket);
+    } else {
+        Http404Error(path, &socket);
     }
 
     // close the connection

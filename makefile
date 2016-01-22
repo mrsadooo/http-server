@@ -7,7 +7,8 @@ ARTIFACTS = main.o \
             server.o \
             client.o \
             cgi.o \
-            reader.o
+            reader.o \
+            error.o
 
 make: clean build
 
